@@ -1,4 +1,4 @@
-import { AreaChart, Layers, AppWindow } from "lucide-react";
+import { AreaChart, Layers, AppWindow, Sidebar } from "lucide-react";
 
 type NavLink = {
   href: string;
@@ -23,3 +23,5 @@ const links: NavLink[] = [
     icon: <AreaChart />,
   },
 ];
+
+export default links;
