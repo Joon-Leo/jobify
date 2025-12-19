@@ -81,6 +81,7 @@ export async function getAllJobsAction({
         status: jobStatus,
       };
     }
+
     const jobs: JobType[] = await prisma.job.findMany({
       where: whereClause,
       orderBy: {
@@ -90,5 +91,21 @@ export async function getAllJobsAction({
     return { jobs, count: 0, page: 1, totalPages: 0 };
   } catch (error) {
     return { jobs: [], count: 0, page: 1, totalPages: 0 };
+  }
+}
+
+export async function deleteJobAction(id: string): Promise<JobType | null> {
+  const userId = await authenticateAndRedirect();
+
+  try {
+    const job: JobType = await prisma.job.delete({
+      where: {
+        id,
+        clerkId: userId,
+      },
+    });
+    return job;
+  } catch (error) {
+    return null;
   }
 }
