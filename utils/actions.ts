@@ -83,13 +83,22 @@ export async function getAllJobsAction({
       };
     }
 
+    const skip = (page - 1) * limit;
+
     const jobs: JobType[] = await prisma.job.findMany({
       where: whereClause,
+      skip,
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
     });
-    return { jobs, count: 0, page: 1, totalPages: 0 };
+
+    const count: number = await prisma.job.count({
+      where: whereClause,
+    });
+    const totalPages = Math.ceil(count / limit);
+    return { jobs, count, page, totalPages };
   } catch (error) {
     return { jobs: [], count: 0, page: 1, totalPages: 0 };
   }
@@ -164,7 +173,7 @@ export async function getStatsAction(): Promise<{
   try {
     const stats = await prisma.job.groupBy({
       where: {
-        clerkId: userId, // replace userId with the actual clerkId
+        clerkId: userId,
       },
       by: ["status"],
       _count: {
